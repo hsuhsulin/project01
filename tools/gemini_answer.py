@@ -3,7 +3,7 @@ import os
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-from geopy.geocoders import Nominatim
+#from geopy.geocoders import Nominatim
 
 load_dotenv()
 
