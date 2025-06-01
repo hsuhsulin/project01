@@ -121,7 +121,7 @@ def get_real_photo_url(photo_reference, api_key):
         return response.headers.get("Location")
     return None
 
-
+'''
 keyWord1 = "義大利麵"
 keyWord2 = get_random_dessert()
 lat, lng = address_to_latlng(address, GOOGLE_API_KEY)
@@ -139,4 +139,4 @@ if __name__ == '__main__':
             
     else:
         print("地址轉換失敗")
-
+'''
