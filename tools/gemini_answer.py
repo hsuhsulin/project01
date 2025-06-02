@@ -3,7 +3,6 @@ import os
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-#from geopy.geocoders import Nominatim
 
 load_dotenv()
 
@@ -15,8 +14,13 @@ genai.configure(api_key=GEMINI_API_KEY)
 # 使用正確的模型 ID
 gemini_model = genai.GenerativeModel(model_name="gemini-1.5-flash")
 
+def gemini_translate(message):
+    prompt = f'幫我用指定語言翻譯以下文字，直接給我翻譯內容就好:  {message}'
+    response = gemini_model.generate_content(prompt)
+    return response.text.strip()
+
 def gemini_recommend(message):
-    prompt = f'請幫我翻譯這段文字成對應的語言，給我該單字就好不要講超過20字，若沒有指定則翻譯成英文: {message}'
+    prompt = f'用150字告訴我 {message}'
     response = gemini_model.generate_content(prompt)
     return response.text.strip()
 
