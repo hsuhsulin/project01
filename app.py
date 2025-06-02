@@ -5,7 +5,7 @@ from tools.event_parser import parse_event_from_text, create_gcal_url
 from tools.calendar_module import get_today_events
 from tools.weather import find_nearest_forecast_location, get_weather_weekly_forecast
 from tools.AnswerBook import answer_book, daily_lucky
-from tools.gemini_answer import gemini_recommend
+from tools.gemini_answer import gemini_recommend, gemini_translate
 from tools.FindNearbyRestaurant import get_random_food, insert_food, delete_food,get_food, clear_food
 from tools.FindNearbyRestaurant import find_nearby_restaurants, print_food_list, reset_food_list
 from linebot.v3 import WebhookHandler
@@ -241,16 +241,16 @@ def handle_text(event):
                 )
             )
 
-        elif user_message == "為您查詢評分大於4.0的相關店家...":
-            Find_Restaurant = True
-            Random_Food = True
-            reset_food_list()
+        elif user_message.startswith("翻譯"):
+            response = gemini_translate(user_message)
             line_bot_api.reply_message_with_http_info(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
-                    messages=[TextMessage(text="『 + -> 位置資訊』發送您的位置")]
+                    messages=[TextMessage(text=response)]
                 )
             )
+
+
         else:
             # 使用 Gemini API 生成翻譯
             response = gemini_recommend(user_message)
@@ -301,7 +301,7 @@ def handle_postback(event):
                     text="還要再轉一次嗎？",
                     actions=[
                         MessageAction(label="是", text="轉盤"),
-                        MessageAction(label="否", text="為您查詢相關店家...")
+                        PostbackAction(label="否", data="action=find_restaurant")
                     ]
                 )
             )
@@ -310,6 +310,16 @@ def handle_postback(event):
                     reply_token=event.reply_token,
                     messages=[TextMessage(
                         text=text), confirm_message]
+                )
+            )
+        elif data == "action=find_restaurant":
+            Find_Restaurant = True
+            Random_Food = True
+            reset_food_list()
+            line_bot_api.reply_message_with_http_info(
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[TextMessage(text="為您查詢評分大於4.0的相關店家...\n『 + -> 位置資訊』發送您的位置")]
                 )
             )
         message = TextMessage(type="text", text=text)
